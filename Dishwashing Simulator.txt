@@ -1,0 +1,99 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/KarumuScrpts/SimHub/main/Loader.txt')))()
+local w = library:CreateWindow("Dishwashing Simulator")
+local b = w:CreateFolder("AutoFarm")
+local e = w:CreateFolder("Mix")
+local u = w:CreateFolder("Credits")
+--Toggle
+b:Toggle("AutoGrab",function(bool)
+    shared.toggle = bool
+    AutoGrab = bool
+end)
+
+b:Toggle("AutoPlaceAndTake",function(bool)
+    shared.toggle = bool
+    AutoPlaceAndTake = bool
+end)
+
+b:Toggle("AutoSell",function(bool)
+    shared.toggle = bool
+    AutoSell = bool
+end)
+
+e:Toggle("AntiAfk",function(bool)
+    shared.toggle = bool
+    AntiAfk = bool
+end)
+--Credits
+u:Button("Sin#3876",function()
+Print("Very Nice")
+end)
+ 
+
+while true do
+    wait()
+    if AutoPlaceAndTake == true then
+        local tycoon = game:GetService("Workspace").Tycoons:GetChildren()
+        for i,v in pairs(tycoon) do --Tycoon
+            local tycoon1 = v.Furniture:GetChildren()
+            for i,v1 in pairs(tycoon1) do
+                --remote
+               game:GetService("ReplicatedStorage").Events.DishwasherInteract:FireServer(v1) 
+               --tp
+               game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(v.Floor.CFrame.Position + Vector3.new(0,0,0))
+               wait()
+            end
+        end
+    end
+    
+    if AutoSell == true then
+        game:GetService("ReplicatedStorage").Events.DepositDishes:FireServer()
+    end
+    
+    if AutoGrab == true then
+        local Dishes = game:GetService("Workspace"):FindFirstChild("Dishes")
+        local Dishes1 = Dishes:GetChildren()
+        if Dishes then
+            for i, v in pairs(Dishes1)do
+                wait()
+                if Dishes then
+                    if AutoGrab == true then
+                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(v.Hitbox.CFrame.Position + Vector3.new(0,3,0))
+                        local args = {
+                            [1] = v,
+                        }
+                        
+                        game:GetService("ReplicatedStorage").Events.CollectDish:FireServer(unpack(args))
+                    end
+                end
+                
+                if AutoPlaceAndTake == true then
+                    local tycoon = game:GetService("Workspace").Tycoons:GetChildren()
+                    for i,v in pairs(tycoon) do --Tycoon
+                        local tycoon1 = v.Furniture:GetChildren()
+                        for i,v1 in pairs(tycoon1) do
+                            --remote
+                           game:GetService("ReplicatedStorage").Events.DishwasherInteract:FireServer(v1) 
+                           --tp
+                           if v:FindFirstChild(v1.Name) then
+                               game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(v.Floor.CFrame.Position + Vector3.new(0,0,0))
+                               wait()
+                           end
+                        end
+                    end
+                end
+                
+                if AutoSell == true then
+                    game:GetService("ReplicatedStorage").Events.DepositDishes:FireServer()
+                end
+            end
+        end
+    end
+    
+    if AntiAfk == true then
+        local bb=game:service'VirtualUser'
+        game:service'Players'.LocalPlayer.Idled:connect(function()
+            bb:CaptureController()
+            bb:ClickButton2(Vector2.new())
+        end)
+    end
+end
